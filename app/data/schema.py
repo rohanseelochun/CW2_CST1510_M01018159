@@ -1,3 +1,6 @@
+from pathlib import Path
+import pandas as pd
+
 def create_users_table(conn):
     """Create users table."""
     cursor = conn.cursor()
@@ -72,7 +75,39 @@ def create_it_tickets_table(conn):
     print("Successfully created It Tickets table.")
     pass
 
+#Load CSV to Table
+def load_csv_to_table(conn, csv_path, table_name):
+    """
+    Load a CSV file into a database table using pandas.
 
+    TODO: Implement this function.
+
+    Args:
+        conn: Database connection
+        csv_path: Path to CSV file
+        table_name: Name of the target table
+
+    Returns:
+        int: Number of rows loaded
+    """
+    # TODO: Check if CSV file exists
+    if not csv_path.exists():
+        print(f"⚠️ File not found: {csv_path}")
+        return 0
+
+    # TODO: Read CSV using pandas.read_csv()
+    df = pd.read_csv(csv_path)
+
+    # TODO: Use df.to_sql() to insert data
+    # Parameters: name=table_name, con=conn, if_exists='append', index=False
+    df.to_sql(name=table_name, con=conn, if_exists='append', index=False)
+
+    # TODO: Print success message and return row count
+    row_count = len(df)
+    print(f"Loaded {row_count} rows into '{table_name}' from {csv_path}")
+    return row_count
+
+#Load All CSV
 def load_all_csv_data(conn):
     cursor = conn.cursor()
     tables = ["cyber_incidents", "datasets_metadata", "it_tickets"]
@@ -83,7 +118,6 @@ def load_all_csv_data(conn):
         count = cursor.fetchone()[0]
         total_rows += count
     return total_rows
-
 
 def create_all_tables(conn):
     """Create all tables."""

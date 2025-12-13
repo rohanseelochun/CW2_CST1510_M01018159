@@ -98,6 +98,32 @@ def load_csv_to_table(conn, csv_path, table_name):
     # TODO: Read CSV using pandas.read_csv()
     df = pd.read_csv(csv_path)
 
+    if table_name == "cyber_incidents":
+        df = df.rename(columns={
+            "timestamp": "date",
+            "category": "incident_type"
+        })
+        df = df.drop(columns=["incident_id"])
+
+    elif table_name == "datasets_metadata":
+        df = df.rename(columns={
+            "name": "dataset_name",
+            "rows": "record_count",
+            "upload_date": "last_updated"
+        })
+        df = df.drop(columns=["dataset_id","columns", "uploaded_by"])
+
+    elif table_name == "it_tickets":
+        df = df.rename(columns={
+            "created_at": "created_date",
+            "description": "subject"
+        })
+        df = df.drop(columns=["resolution_time_hours"])
+
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE FROM {table_name}")
+    conn.commit()
+
     # TODO: Use df.to_sql() to insert data
     # Parameters: name=table_name, con=conn, if_exists='append', index=False
     df.to_sql(name=table_name, con=conn, if_exists='append', index=False)
@@ -108,15 +134,21 @@ def load_csv_to_table(conn, csv_path, table_name):
     return row_count
 
 #Load All CSV
+DATA_DIR = Path("DATA")
+
 def load_all_csv_data(conn):
-    cursor = conn.cursor()
-    tables = ["cyber_incidents", "datasets_metadata", "it_tickets"]
+    tables = {
+        "cyber_incidents": DATA_DIR / "cyber_incidents.csv",
+        "datasets_metadata": DATA_DIR / "datasets_metadata.csv",
+        "it_tickets": DATA_DIR / "it_tickets.csv",
+    }
+
     total_rows = 0
-    
-    for table in tables:
-        cursor.execute(f"SELECT COUNT (*) FROM {table}")
-        count = cursor.fetchone()[0]
-        total_rows += count
+
+    for table_name, csv_file in tables.items():
+        rows = load_csv_to_table(conn, csv_file, table_name)
+        total_rows += rows
+
     return total_rows
 
 def create_all_tables(conn):

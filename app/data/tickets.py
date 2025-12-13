@@ -47,3 +47,16 @@ def get_high_priority_tickets_by_status(conn):
     ORDER BY count DESC
     """
     return pd.read_sql_query(query, conn)
+
+
+def get_tickets_by_priority_count(conn):
+    """
+    Count tickets by priority.
+    """
+    query = """
+    SELECT priority, COUNT(*) AS count
+    FROM it_tickets
+    GROUP BY priority
+    ORDER BY count DESC
+    """
+    return pd.read_sql_query(query, conn)

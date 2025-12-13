@@ -16,4 +16,20 @@ if not st.session_state.logged_in:
     st.stop()
 
 st.title("⚙️ Settings")
-st.write("User settings will be added in future updates.")
+
+st.subheader("Appearance")
+
+theme = st.selectbox(
+    "Theme",
+    ["Light", "Dark"],
+    index=0
+)
+
+st.caption("This option is still in its testing phase.")
+
+st.subheader("🔒 Account")
+
+if st.button("🚪 Logout"):
+    st.session_state.logged_in = False
+    st.success("You have been logged out.")
+    st.switch_page("Home.py")

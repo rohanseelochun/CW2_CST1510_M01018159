@@ -1,27 +1,17 @@
 import pandas as pd
-from app.data.db import connect_database
-from pathlib import Path
 
-#Part 8: Analytical Queries (The Big 6) - OPTIONAL it couuld be done with pandas
+# ================= ANALYTICS =================
+
 def get_incidents_by_type_count(conn):
-    """
-    Count incidents by type.
-    Uses: SELECT, FROM, GROUP BY, ORDER BY
-    """
     query = """
     SELECT incident_type, COUNT(*) as count
     FROM cyber_incidents
     GROUP BY incident_type
     ORDER BY count DESC
     """
-    df = pd.read_sql_query(query, conn)
-    return df
+    return pd.read_sql_query(query, conn)
 
 def get_high_severity_by_status(conn):
-    """
-    Count high severity incidents by status.
-    Uses: SELECT, FROM, WHERE, GROUP BY, ORDER BY
-    """
     query = """
     SELECT status, COUNT(*) as count
     FROM cyber_incidents
@@ -29,14 +19,9 @@ def get_high_severity_by_status(conn):
     GROUP BY status
     ORDER BY count DESC
     """
-    df = pd.read_sql_query(query, conn)
-    return df
+    return pd.read_sql_query(query, conn)
 
 def get_incident_types_with_many_cases(conn, min_count=5):
-    """
-    Find incident types with more than min_count cases.
-    Uses: SELECT, FROM, GROUP BY, HAVING, ORDER BY
-    """
     query = """
     SELECT incident_type, COUNT(*) as count
     FROM cyber_incidents
@@ -44,118 +29,43 @@ def get_incident_types_with_many_cases(conn, min_count=5):
     HAVING COUNT(*) > ?
     ORDER BY count DESC
     """
-    df = pd.read_sql_query(query, conn, params=(min_count,))
-    return df
+    return pd.read_sql_query(query, conn, params=(min_count,))
 
-# Test: Run analytical queries
-conn = connect_database()
+# ================= CRUD =================
 
-print("\n Incidents by Type:")
-df_by_type = get_incidents_by_type_count(conn)
-print(df_by_type)
-
-print("\n High Severity Incidents by Status:")
-df_high_severity = get_high_severity_by_status(conn)
-print(df_high_severity)
-
-print("\n Incident Types with Many Cases (>5):")
-df_many_cases = get_incident_types_with_many_cases(conn, min_count=5)
-print(df_many_cases)
-
-conn.close()
-
-def load_csv_to_table(conn, csv_path, table_name):
-    """
-    Load a CSV file into a database table using pandas.
-
-    TODO: Implement this function.
-
-    Args:
-        conn: Database connection
-        csv_path: Path to CSV file
-        table_name: Name of the target table
-
-    Returns:
-        int: Number of rows loaded
-    """
-    csv_path = Path(csv_path)
-    if not csv_path.exists():
-        print(f"CSV file not found.")
-        return 0
-    
-    df = pd.read_csv(csv_path)
-    df.to_sql(name=table_name, con = conn, if_exists = "append", index=False)
-
-    print(f"Success. Loaded {len(df)} rows into {table_name}.")
-    return len(df)
-pass
-
-def insert_incident(conn, date, incident_type, severity, status, description, reported_by=None):
-    """
-    Insert a new cyber incident into the database.
-
-    TODO: Implement this function following the register_user() pattern.
-
-    Args:
-        conn: Database connection
-        date: Incident date (YYYY-MM-DD)
-        incident_type: Type of incident
-        severity: Severity level
-        status: Current status
-        description: Incident description
-        reported_by: Username of reporter (optional)
-
-    Returns:
-        int: ID of the inserted incident
-    """
+def insert_incident(conn, timestamp, category, severity, status, description):
     cursor = conn.cursor()
     cursor.execute(
         """
-        INSERT INTO cyber_incidents (date, incident_type, severity, status, description, reported_by)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """, (date, incident_type, severity, status, description, reported_by))
+        INSERT INTO cyber_incidents
+        (date, incident_type, severity, status, description)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (timestamp, category, severity, status, description)
+    )
     conn.commit()
     return cursor.lastrowid
-pass
 
 def get_all_incidents(conn):
-    """
-    Retrieve all incidents from the database.
-
-    TODO: Implement using pandas.read_sql_query()
-
-    Returns:
-        pandas.DataFrame: All incidents
-    """
-    return pd.read_sql_query("SELECT * FROM cyber_incidents", conn)
-pass
+    return pd.read_sql_query(
+        "SELECT * FROM cyber_incidents",
+        conn
+    )
 
 def update_incident_status(conn, incident_id, new_status):
-    """
-    Update the status of an incident.
-
-    TODO: Implement UPDATE operation.
-    """
     cursor = conn.cursor()
     cursor.execute(
-    """
-    UPDATE cyber_incidents SET status = ? WHERE id = ?
-    """, (new_status, incident_id))
+        "UPDATE cyber_incidents SET status = ? WHERE id = ?",
+        (new_status, incident_id)
+    )
     conn.commit()
     return cursor.rowcount
-pass
 
 def delete_incident(conn, incident_id):
-    """
-    Delete an incident from the database.
-
-    TODO: Implement DELETE operation.
-    """
     cursor = conn.cursor()
     cursor.execute(
-    """
-    DELETE FROM cyber_incidents WHERE id = ?
-    """, (incident_id,))
+        "DELETE FROM cyber_incidents WHERE id = ?",
+        (incident_id,)
+    )
     conn.commit()
     return cursor.rowcount
-pass

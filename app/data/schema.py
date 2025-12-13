@@ -25,9 +25,7 @@ def create_cyber_incidents_table(conn):
             severity TEXT,
             status TEXT,
             description TEXT,
-            reported_by TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (reported_by) REFERENCES users(username)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
     conn.commit()
@@ -62,11 +60,8 @@ def create_it_tickets_table(conn):
             ticket_id TEXT UNIQUE NOT NULL,
             priority TEXT,
             status TEXT,
-            category TEXT,
             subject TEXT NOT NULL,
-            description TEXT,
             created_date TEXT,
-            resolved_date TEXT,
             assigned_to TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -109,9 +104,10 @@ def load_csv_to_table(conn, csv_path, table_name):
         df = df.rename(columns={
             "name": "dataset_name",
             "rows": "record_count",
-            "upload_date": "last_updated"
+            "upload_date": "last_updated",
+            "uploaded_by": "source"
         })
-        df = df.drop(columns=["dataset_id","columns", "uploaded_by"])
+        df = df.drop(columns=["dataset_id","columns"])
 
     elif table_name == "it_tickets":
         df = df.rename(columns={

@@ -1,65 +1,79 @@
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(ROOT_DIR))
+
 import streamlit as st
+from app.services.user_service import login_user, register_user
 
-# Page config must be the first Streamlit call
-st.set_page_config(page_title="🔐 Login / Register", page_icon="🔐", layout="centered")
+st.set_page_config(
+    page_title="🔐 Login / Register",
+    page_icon="🔐",
+    layout="centered"
+)
 
-# --- Initialize session state keys ---
-if "users" not in st.session_state:
-    # Teaching-only in-memory "database": {username: password}
-    st.session_state.users = {}
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
+
 if "username" not in st.session_state:
     st.session_state.username = ""
+
 if "role" not in st.session_state:
-    st.session_state.role = "user"  # default role for now
+    st.session_state.role = "user"
 
-st.title("🔐 Welcome")
-
-# If already logged in, offer direct navigation and don’t show tabs again
 if st.session_state.logged_in:
-    st.success(f"Already logged in as **{st.session_state.username}** (role: {st.session_state.role}).")
+    st.success(
+        f"Already logged in as **{st.session_state.username}** "
+        f"(role: {st.session_state.role})"
+    )
     if st.button("Go to Dashboard ➜", type="primary"):
         st.switch_page("pages/1_Dashboard.py")
     st.stop()
 
-# --- Tabs: Login / Register ---
+st.title("🔐 Welcome")
+
 tab_login, tab_register = st.tabs(["Login", "Register"])
 
-# ------- LOGIN TAB -------
 with tab_login:
     st.subheader("Login")
-    login_username = st.text_input("Username", key="login_username")
-    login_password = st.text_input("Password", type="password", key="login_password")
+
+    login_username = st.text_input("Username")
+    login_password = st.text_input("Password", type="password")
 
     if st.button("Log in", type="primary"):
-        # Teaching-only check against in-memory dict
-        users = st.session_state.users
-        if login_username in users and users[login_username] == login_password:
-            st.session_state.logged_in = True
-            st.session_state.username = login_username
-            st.session_state.role = "user"  # or set based on username if you want
-            st.success(f"Welcome back, {login_username}! 🎉")
-            st.switch_page("pages/1_Dashboard.py")
+        if not login_username or not login_password:
+            st.warning("Please enter both username and password.")
         else:
-            st.error("Invalid username or password.")
+            success, message = login_user(login_username, login_password)
 
-# ------- REGISTER TAB (in-memory) -------
+            if success:
+                st.session_state.logged_in = True
+                st.session_state.username = login_username
+                st.session_state.role = "user"
+
+                st.success(message)
+                st.switch_page("pages/1_Dashboard.py")
+            else:
+                st.error(message)
+
 with tab_register:
     st.subheader("Register")
-    new_username = st.text_input("Choose a username", key="register_username")
-    new_password = st.text_input("Choose a password", type="password", key="register_password")
-    confirm_password = st.text_input("Confirm password", type="password", key="register_confirm")
+
+    new_username = st.text_input("Choose a username")
+    new_password = st.text_input("Choose a password", type="password")
+    confirm_password = st.text_input("Confirm password", type="password")
 
     if st.button("Create account"):
         if not new_username or not new_password:
             st.warning("Please fill in all fields.")
         elif new_password != confirm_password:
             st.error("Passwords do not match.")
-        elif new_username in st.session_state.users:
-            st.error("Username already exists. Choose another one.")
         else:
-            # Teaching-only: store plaintext in memory (we’ll replace with DB + hashing later)
-            st.session_state.users[new_username] = new_password
-            st.success("Account created! You can now log in from the Login tab.")
-            st.info("Tip: go to the Login tab and sign in with your new account.")
+            success, message = register_user(new_username, new_password)
+
+            if success:
+                st.success(message)
+                st.info("You can now log in from the Login tab.")
+            else:
+                st.error(message)

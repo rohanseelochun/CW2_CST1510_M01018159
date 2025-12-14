@@ -1,14 +1,16 @@
 import sys
 from pathlib import Path
+import streamlit as st
+from app.services.user_service import login_user, register_user
+
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT_DIR))
 
-import streamlit as st
-from app.services.user_service import login_user, register_user
 
+#Configurating the page.
 st.set_page_config(
-    page_title="🔐 Login / Register",
+    page_title="Login / Register",
     page_icon="🔐",
     layout="centered"
 )
@@ -35,6 +37,8 @@ st.title("🔐 Welcome")
 
 tab_login, tab_register = st.tabs(["Login", "Register"])
 
+
+#Login.
 with tab_login:
     st.subheader("Login")
 
@@ -57,6 +61,8 @@ with tab_login:
             else:
                 st.error(message)
 
+
+#Registration.
 with tab_register:
     st.subheader("Register")
 

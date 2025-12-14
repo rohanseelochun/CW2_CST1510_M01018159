@@ -12,9 +12,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# -----------------------------
-# AUTH STATE
-# -----------------------------
+
+#Check the login.
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
@@ -24,29 +23,24 @@ if not st.session_state.logged_in:
         st.switch_page("Home.py")
     st.stop()
 
-# -----------------------------
-# API KEY CHECK (minimal)
-# -----------------------------
+
+#Checking the API key.
 if "API_KEY" not in st.secrets:
     st.error("API key not configured.")
     st.stop()
 
 client = genai.Client(api_key=st.secrets["API_KEY"])
 
-# -----------------------------
-# TABS
-# -----------------------------
 tab_Cybersecurity_AI_Assistant, tab_IT_Operation_AI_Assistant, tab_Data_Science_AI_Assistant = st.tabs(
     ["Cybersecurity AI Assistant", "IT Operation AI Assistant", "Data Science AI Assistant"]
 )
 
-# =====================================================
-# CYBERSECURITY TAB
-# =====================================================
+
+#Cybersecurity_AI_Assistant tab.
 with tab_Cybersecurity_AI_Assistant:
 
-    st.title("🛡 Cybersecurity AI Assistant")
-    st.caption("Powered by Gemini 2.5 Flash")
+    st.title("Cybersecurity AI Assistant")
+    st.caption("Powered by Gemini")
 
     system_prompt_cyber = """You are a cybersecurity expert assistant.
     - Analyze incidents and threats
@@ -102,13 +96,11 @@ with tab_Cybersecurity_AI_Assistant:
 
         st.session_state.messages_cyber.append({"role": "assistant", "content": full_reply})
 
-# =====================================================
-# IT OPERATIONS TAB
-# =====================================================
+#IT_Opeartion_AI_Assistant tab.
 with tab_IT_Operation_AI_Assistant:
 
-    st.title("🖥 IT Operations AI Assistant")
-    st.caption("Powered by Gemini 2.5 Flash")
+    st.title("IT Operations AI Assistant")
+    st.caption("Powered by Gemini")
 
     system_prompt_it = """You are an IT Operations expert assistant.
     - Help troubleshoot IT issues
@@ -164,13 +156,12 @@ with tab_IT_Operation_AI_Assistant:
 
         st.session_state.messages_it.append({"role": "assistant", "content": full_reply})
 
-# =====================================================
-# DATA SCIENCE TAB
-# =====================================================
+
+#Data_Science_AI_Assistant tab.
 with tab_Data_Science_AI_Assistant:
 
-    st.title("📊 Data Science AI Assistant")
-    st.caption("Powered by Gemini 2.5 Flash")
+    st.title("Data Science AI Assistant")
+    st.caption("Powered by Gemini")
 
     system_prompt_ds = """You are a Data Science expert assistant.
     - Help with analysis, visualization, and statistical insights.

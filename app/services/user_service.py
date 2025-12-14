@@ -7,6 +7,8 @@ import sqlite3
 
 DATA_DIR = Path("DATA")
 
+
+#Register a new user.
 def register_user(username, password, role="user"):
     """
     Register a new user in the database.
@@ -46,6 +48,8 @@ def register_user(username, password, role="user"):
 
     return True, f"User '{username}' registered successfully!"
 
+
+#Login & verify the user credentials.
 def login_user(username, password):
     """
     Authenticate a user against the database.
@@ -80,6 +84,8 @@ def login_user(username, password):
     else:
         return False, "Invalid password."
 
+
+#Migrate users from users.txt to the database.
 def migrate_users_from_file(conn, filepath=DATA_DIR / "users.txt"):
     """
     Migrate users from users.txt to the database.

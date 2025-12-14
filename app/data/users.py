@@ -1,7 +1,7 @@
 from app.data.db import connect_database
 
+#Get a user by username.
 def get_user_by_username(username):
-    """Retrieve user by username."""
     conn = connect_database()
     cursor = conn.cursor()
     cursor.execute(
@@ -12,8 +12,9 @@ def get_user_by_username(username):
     conn.close()
     return user
 
+
+#Insert a new user into the database.
 def insert_user(username, password_hash, role='user'):
-    """Insert new user."""
     conn = connect_database()
     cursor = conn.cursor()
     cursor.execute(

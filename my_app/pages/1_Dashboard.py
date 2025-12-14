@@ -5,31 +5,33 @@ from app.data.tickets import *
 from app.data.datasets import *
 from time import sleep
 
-# ---------------- SESSION STATE ----------------
+
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# ---------------- AUTH GUARD ----------------
+#Redirection if user is not logged in.
 if not st.session_state.logged_in:
     st.error("Please log in to access the dashboard.")
     if st.button("Go to Login Page"):
         st.switch_page("Home.py")
         st.stop()
 
-# ---------------- DB CONNECTION ----------------
+#Connecting the database.
 conn = connect_database("DATA/intelligence_platform.db")
 
+#Existing tabs.
 tab_incidents, tab_tickets, tab_datasets = st.tabs(
     ["Incidents", "Tickets", "Datasets"]
 )
 
-# ======================= INCIDENTS =======================
+#Incidents tab.
 with tab_incidents:
 
     st.title("Cyber Incidents Dashboard")
 
     st.dataframe(get_all_incidents(conn), use_container_width=True)
 
+    #Adding the incident.
     with st.form("new_incident"):
         timestamp = st.date_input("Timestamp")
         severity = st.selectbox("Severity", ["Low", "Medium", "High", "Critical"])
@@ -46,6 +48,7 @@ with tab_incidents:
         sleep(1)
         st.rerun()
 
+    #Deleting the incident.
     with st.form("delete_incident"):
         delete_id = st.text_input("Enter Incident ID to Delete")
         delete_submit = st.form_submit_button("Delete Incident")
@@ -57,6 +60,7 @@ with tab_incidents:
         sleep(1)
         st.rerun()
 
+    #Updating the incident.
     with st.form("update_incident"):
         incident_id = st.text_input("Enter Incident ID to Update")
         new_status = st.selectbox("New Status", ["Open", "In Progress", "Resolved"])
@@ -82,7 +86,8 @@ with tab_incidents:
         use_container_width=True
     )
 
-# ======================= TICKETS =======================
+
+#Tickets tab.
 with tab_tickets:
 
     st.title("IT Tickets Dashboard")
@@ -91,6 +96,7 @@ with tab_tickets:
     tickets = tickets.rename(columns={"subject": "description"})
     st.dataframe(tickets, use_container_width=True)
 
+    #Adding the ticket.
     with st.form("new_ticket"):
         ticket_id = st.text_input("Ticket ID")
         priority = st.selectbox("Priority", ["Low", "Medium", "High", "Critical"])
@@ -108,6 +114,7 @@ with tab_tickets:
         sleep(1)
         st.rerun()
 
+    #Deleting the ticket.
     with st.form("delete_ticket"):
         delete_id = st.text_input("Enter Ticket ID to Delete")
         delete_submit = st.form_submit_button("Delete Ticket")
@@ -119,6 +126,7 @@ with tab_tickets:
         sleep(1)
         st.rerun()
 
+    #Updating the ticket.
     with st.form("update_ticket"):
         update_id = st.text_input("Enter Ticket ID to Update")
         new_status = st.selectbox("New Status", ["Open", "In Progress", "Resolved"])
@@ -134,7 +142,8 @@ with tab_tickets:
     st.subheader("High Priority Tickets by Status")
     st.dataframe(get_high_priority_tickets_by_status(conn), use_container_width=True)
 
-# ======================= DATASETS =======================
+
+#Datasets tab.
 with tab_datasets:
 
     st.title("Datasets Metadata Dashboard")
@@ -145,6 +154,7 @@ with tab_datasets:
 
     st.dataframe(datasets, use_container_width=True)
 
+    #Add a dataset.
     with st.form("new_dataset"):
         name = st.text_input("Name")
         dataset_id = st.text_input("Dataset ID")
@@ -156,22 +166,24 @@ with tab_datasets:
 
     if submitted:
         insert_dataset(conn, dataset_id, name, record_count, uploaded_by, upload_date)
-        st.success("✓ Dataset added successfully!")
+        st.success("Dataset added successfully!")
         conn.close()
         sleep(1)
         st.rerun()
 
+    #Deleting the dataset
     with st.form("delete_dataset"):
         delete_id = st.text_input("Enter Dataset ID to Delete")
         delete_submit = st.form_submit_button("Delete Dataset")
 
     if delete_submit and delete_id:
         delete_dataset(conn, delete_id)
-        st.success("✓ Dataset deleted successfully!")
+        st.success("Dataset deleted successfully!")
         conn.close()
         sleep(1)
         st.rerun()
 
+    #Updating the datasets.
     with st.form("update_dataset"):
         dataset_id = st.text_input("Enter Dataset ID to Update")
         new_record_count = st.number_input("Enter new Record Count", min_value=0)
@@ -179,7 +191,7 @@ with tab_datasets:
 
     if update_submit and dataset_id:
         update_dataset_num_rows(conn, dataset_id, new_record_count)
-        st.success("✓ Dataset updated successfully!")
+        st.success("Dataset updated successfully!")
         conn.close()
         sleep(1)
         st.rerun()

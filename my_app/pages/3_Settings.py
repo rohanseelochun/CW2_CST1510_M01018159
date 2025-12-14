@@ -1,11 +1,12 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="⚙️ Settings",
+    page_title="Settings",
     page_icon="⚙️",
     layout="wide"
 )
 
+#Check the login.
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -25,11 +26,12 @@ theme = st.selectbox(
     index=0
 )
 
-st.caption("This option is still in its testing phase.")
+st.caption("This option is still in its BETA phase." \
+"           Do expect bugs.")
 
 st.subheader("🔒 Account")
 
-if st.button("🚪 Logout"):
+if st.button("Logout."):
     st.session_state.logged_in = False
     st.success("You have been logged out.")
     st.switch_page("Home.py")

@@ -13,14 +13,14 @@ from app.data.tickets import (
 
 from app.data.datasets import get_all_datasets
 
-# ---------------- PAGE CONFIG ----------------
+
 st.set_page_config(
-    page_title="📊 Analytics",
+    page_title="Analytics",
     page_icon="📊",
     layout="wide"
 )
 
-# ---------------- AUTH ----------------
+#Check the login.
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -30,15 +30,15 @@ if not st.session_state.logged_in:
         st.switch_page("Home.py")
     st.stop()
 
-# ---------------- DB CONNECTION ----------------
+
+#Connection to the database.
 conn = connect_database("DATA/intelligence_platform.db")
 
 st.title("📊 System Analytics Dashboard")
 st.write("This page presents analytical insights derived from incidents, tickets, and datasets.")
 
-# =====================================================
-# 🚨 INCIDENT ANALYTICS
-# =====================================================
+
+#Incidents analytics.
 st.header("🚨 Incident Analytics")
 
 st.subheader("Incident Count by Type")
@@ -57,9 +57,7 @@ st.bar_chart(
 
 st.divider()
 
-# =====================================================
-# 🎫 TICKET ANALYTICS
-# =====================================================
+#Ticket analytics.
 st.header("🎫 Ticket Analytics")
 
 st.subheader("Tickets by Priority")

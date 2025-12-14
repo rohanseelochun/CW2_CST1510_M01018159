@@ -1,6 +1,8 @@
 from pathlib import Path
 import pandas as pd
 
+
+#Create users table.
 def create_users_table(conn):
     """Create users table."""
     cursor = conn.cursor()
@@ -14,6 +16,8 @@ def create_users_table(conn):
     """)
     conn.commit()
 
+
+#Create cyber_incidents table.
 def create_cyber_incidents_table(conn):
     """Create cyber_incidents table."""
     cursor = conn.cursor()
@@ -32,6 +36,8 @@ def create_cyber_incidents_table(conn):
     print("Successfully created Cyber Incidents table.")
     pass
 
+
+#Create the datasets_metadata table.
 def create_datasets_metadata_table(conn):
     """Create datasets_metadata table."""
     cursor = conn.cursor()
@@ -51,6 +57,8 @@ def create_datasets_metadata_table(conn):
     print("Successfully created Datasets Metadata table.")
     pass
 
+
+#Create the it_tickets table.
 def create_it_tickets_table(conn):
     """Create it_tickets table."""
     cursor = conn.cursor()
@@ -70,6 +78,8 @@ def create_it_tickets_table(conn):
     print("Successfully created It Tickets table.")
     pass
 
+
+#Load CSV file into the database table.
 #Load CSV to Table
 def load_csv_to_table(conn, csv_path, table_name):
     """
@@ -85,12 +95,12 @@ def load_csv_to_table(conn, csv_path, table_name):
     Returns:
         int: Number of rows loaded
     """
-    # TODO: Check if CSV file exists
+    #Check if CSV file exists
     if not csv_path.exists():
-        print(f"⚠️ File not found: {csv_path}")
+        print(f"File not found: {csv_path}")
         return 0
 
-    # TODO: Read CSV using pandas.read_csv()
+    #Read CSV using pandas.read_csv()
     df = pd.read_csv(csv_path)
 
     if table_name == "cyber_incidents":
@@ -116,20 +126,22 @@ def load_csv_to_table(conn, csv_path, table_name):
         })
         df = df.drop(columns=["resolution_time_hours"])
 
+    #Used to clear the existing data before inserting.
     cursor = conn.cursor()
     cursor.execute(f"DELETE FROM {table_name}")
     conn.commit()
 
-    # TODO: Use df.to_sql() to insert data
+    #Use df.to_sql() to insert data
     # Parameters: name=table_name, con=conn, if_exists='append', index=False
     df.to_sql(name=table_name, con=conn, if_exists='append', index=False)
 
-    # TODO: Print success message and return row count
+    #Print success message and return row count
     row_count = len(df)
     print(f"Loaded {row_count} rows into '{table_name}' from {csv_path}")
     return row_count
 
-#Load All CSV
+
+#Load All CSV files into the database.
 DATA_DIR = Path("DATA")
 
 def load_all_csv_data(conn):
@@ -147,6 +159,8 @@ def load_all_csv_data(conn):
 
     return total_rows
 
+
+#Create all database tables.
 def create_all_tables(conn):
     """Create all tables."""
     create_users_table(conn)

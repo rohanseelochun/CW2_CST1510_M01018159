@@ -1,6 +1,6 @@
 import pandas as pd
 
-# INSERT dataset
+#Inserting dataset.
 def insert_dataset(conn, dataset_id, name, record_count, uploaded_by, upload_date):
     cursor = conn.cursor()
     cursor.execute(
@@ -15,12 +15,12 @@ def insert_dataset(conn, dataset_id, name, record_count, uploaded_by, upload_dat
     return cursor.lastrowid
 
 
-# READ all datasets
+#Reading dataset.
 def get_all_datasets(conn):
     return pd.read_sql_query("SELECT * FROM datasets_metadata", conn)
 
 
-# DELETE dataset
+# Deleting dataset.
 def delete_dataset(conn, dataset_id):
     cursor = conn.cursor()
     cursor.execute(
@@ -31,7 +31,7 @@ def delete_dataset(conn, dataset_id):
     return cursor.rowcount
 
 
-# UPDATE dataset rows
+#Updating dataset.
 def update_dataset_num_rows(conn, dataset_id, new_num_rows):
     cursor = conn.cursor()
     cursor.execute(

@@ -37,11 +37,11 @@ Data from CSV files and previously stored user credentials were migrated into th
 - Validation of database structure and data integrity  
 
 ### Technical Implementation
-- **Database Engine:** SQLite  
-- **Schema Definition:** SQL `CREATE TABLE` statements  
-- **CRUD Operations:** Implemented using parameterized SQL queries  
-- **Data Migration:** CSV files and `users.txt` imported into database tables  
-- **Testing:** Verification of correct data insertion and retrieval
+- Database Engine: SQLite  
+- Schema Definition: SQL `CREATE TABLE` statements  
+- CRUD Operations: Implemented using parameterized SQL queries  
+- Data Migration: CSV files and `users.txt` imported into database tables  
+- Testing: Verification of correct data insertion and retrieval
 
 
 ## Week 9: Web Interface, MVC & Visualisation
@@ -59,11 +59,10 @@ This allowed users to interact with the platform through dashboards, forms, and 
 - Settings page for viewing account information and logging out  
 
 ### Technical Implementation
-- **Framework:** Streamlit  
-- **Session Management:** `st.session_state` for authentication and navigation  
-- **Data Visualisation:** Streamlit built-in chart components  
-- **Input Validation:** Ensures correct and valid user input  
-- **Access Control:** Restricted page access for authenticated users only  
+- Framework: Streamlit  
+- Data Visualisation: Streamlit built-in chart components  
+- Input Validation: Ensures correct and valid user input  
+- Access Control: Restricted page access for authenticated users only  
 
 
 ## Week 10: AI Integration
@@ -82,9 +81,8 @@ The AI assistants allow users to ask questions related to cybersecurity, IT oper
 - Integration with existing system data  
 
 ### Technical Implementation
-- **AI Model:** Gemini API  
-- **Integration Method:** API-based request and response handling  
-- **Data Handling:** Domain data loaded from the SQLite database  
-- **Context Preparation:** Database records converted into string format  
-- **Session Management:** Interaction history stored using `st.session_state`  
-- **User Interface:** Tab-based navigation to select the AI assistant  
+- AI Model: Gemini API  
+- Integration Method: API-based request and response handling  
+- Data Handling: Domain data loaded from the SQLite database  
+- Context Preparation: Database records converted into string format  
+- User Interface: Tab-based navigation to select the AI assistant  
